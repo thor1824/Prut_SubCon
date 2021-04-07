@@ -1,6 +1,7 @@
 from ..Entities.synonym import Synonym
 from ..Interfaces.synonymizer_interface import ISynonymizer
 from ..Interfaces.synonym_data_source_interface import ISynonymDataSource
+import functools
 
 
 def __levenshtein_distance__(s: str, t: str) -> int:
@@ -37,19 +38,13 @@ class synonymizer(ISynonymizer):
         """Dependency injection of the data source"""
         self.__data_source = data
 
+    @functools.lru_cache(maxsize=100)
     def get_synonyms(self, search_term: str) -> list[str]:
         """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
-        try:
-            # tries to get cached result
-            cache_result = self.__request_dict[search_term]
-            return cache_result
-        except:
-            # caches if search term is not present in the dictionary
-            # i.e no result cached by given thr search term
-            if self.__data_source is None:
-                raise Exception('Not yet initialized properly')
+        if self.__data_source is None:
+            raise Exception('Not yet initialized properly')
 
-            api_results = self.__data_source.get_synonyms(search_term)
+        api_results = self.__data_source.get_synonyms(search_term)
 
         # Sorts the api_result by the levenshtein distance
         api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
@@ -65,8 +60,6 @@ class synonymizer(ISynonymizer):
         for i in range(n_of_results):
             top_result.append(api_results[i].word)
 
-        # caches the result of the search term
-        self.__cache_result(search_term, top_result)
         return top_result
 
     def get_last_result(self) -> str:
