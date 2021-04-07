@@ -31,6 +31,7 @@ def __levenshtein_distance__(s: str, t: str) -> int:
 
 
 class synonymizer(ISynonymizer):
+    __last_result: str = None
     __data_source: ISynonymDataSource = None
     __request_dict = dict()
 
@@ -40,12 +41,18 @@ class synonymizer(ISynonymizer):
 
     @functools.lru_cache(maxsize=100)
     def get_synonyms(self, search_term: str) -> list[str]:
+        self.__last_result = search_term
         """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
         if self.__data_source is None:
             raise Exception('Not yet initialized properly')
 
         api_results = self.__data_source.get_synonyms(search_term)
 
+
+        """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
+        """Must be sorted on levenshtein distance (lowest first)"""
+        """The result must be locally cached in memory for future requests"""
+        pass
         # Sorts the api_result by the levenshtein distance
         api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
 
@@ -64,7 +71,8 @@ class synonymizer(ISynonymizer):
 
     def get_last_result(self) -> str:
         """Returns the last result returned by this instance"""
-        pass
+        return self.__last_result
+        """pass"""
 
     def get_most_searched_term(self) -> str:
         """Returns the most searched term. Must be O(1)"""
