@@ -1,9 +1,12 @@
 from ..Entities.synonym import Synonym
 from ..Interfaces.synonymizer_interface import ISynonymizer
 from ..Interfaces.synonym_data_source_interface import ISynonymDataSource
+import functools
 
 
 def __levenshtein_distance__(s: str, t: str) -> int:
+    """Calculates the levenshtein distance of two words"""
+
     # Initialize matrix of zeros
     rows = len(s) + 1
     cols = len(t) + 1
@@ -29,14 +32,15 @@ def __levenshtein_distance__(s: str, t: str) -> int:
 class synonymizer(ISynonymizer):
     searchedTerms = dict()
     mostSearchedTerm: str = None
+    __last_result: str = None
     __data_source: ISynonymDataSource = None
-    """request_dict = dict()"""
-    __request_dict = {'Wood': [Synonym('wooden', 1), Synonym('woods', 1), Synonym('woodwind', 1)]}
+    __request_dict = dict()
 
     def set_synonym_data_source(self, data: ISynonymDataSource) -> None:
         """Dependency injection of the data source"""
         self.__data_source = data
 
+    @functools.lru_cache(maxsize=100)
     def get_synonyms(self, search_term: str) -> list[str]:
         self.addToSearchedTerms(search_term)
         try:
@@ -50,16 +54,33 @@ class synonymizer(ISynonymizer):
         result2.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
         if len(result2) == 3:
             return result2
-
-        
+        self.__last_result = search_term
         """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
-        """Must be sorted on levenshtein distance (lowest first)"""
-        """The result must be locally cached in memory for future requests"""
-        pass
+        if self.__data_source is None:
+            raise Exception('Not yet initialized properly')
+
+        api_results = self.__data_source.get_synonyms(search_term)
+        
+        # Sorts the api_result by the levenshtein distance
+        api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
+
+        top_result = list()
+        n_of_results = 3
+
+        # checks if it is possible to return a list of top three,
+        # if not the set n_of_results is set to the length og the array
+        if len(api_results) < 3:
+            n_of_results = len(api_results)
+
+        for i in range(n_of_results):
+            top_result.append(api_results[i].word)
+
+        return top_result
 
     def get_last_result(self) -> str:
         """Returns the last result returned by this instance"""
-        pass
+        return self.__last_result
+        """pass"""
 
     def get_most_searched_term(self) -> str:
         """Returns the most searched term. Must be O(1)"""
