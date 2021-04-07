@@ -47,12 +47,7 @@ class synonymizer(ISynonymizer):
             raise Exception('Not yet initialized properly')
 
         api_results = self.__data_source.get_synonyms(search_term)
-
-
-        """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
-        """Must be sorted on levenshtein distance (lowest first)"""
-        """The result must be locally cached in memory for future requests"""
-        pass
+        
         # Sorts the api_result by the levenshtein distance
         api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
 
