@@ -28,6 +28,7 @@ def __levenshtein_distance__(s: str, t: str) -> int:
 
 
 class synonymizer(ISynonymizer):
+    __last_result: str = None
     __data_source: ISynonymDataSource = None
     """request_dict = dict()"""
     __request_dict = {'Wood': [Synonym('wooden', 1), Synonym('woods', 1), Synonym('woodwind', 1)]}
@@ -37,6 +38,7 @@ class synonymizer(ISynonymizer):
         self.__data_source = data
 
     def get_synonyms(self, search_term: str) -> list[str]:
+        self.__last_result = search_term
         try:
             result = self.__request_dict[search_term]
             return result
@@ -49,7 +51,7 @@ class synonymizer(ISynonymizer):
         if len(result2) == 3:
             return result2
 
-        
+
         """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
         """Must be sorted on levenshtein distance (lowest first)"""
         """The result must be locally cached in memory for future requests"""
@@ -57,7 +59,8 @@ class synonymizer(ISynonymizer):
 
     def get_last_result(self) -> str:
         """Returns the last result returned by this instance"""
-        pass
+        return self.__last_result
+        """pass"""
 
     def get_most_searched_term(self) -> str:
         """Returns the most searched term. Must be O(1)"""
