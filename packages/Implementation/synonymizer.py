@@ -84,12 +84,6 @@ class synonymizer(ISynonymizer):
         return self.mostSearchedTerm
         pass
 
-    ## count up
-    # hent ud x
-    # tæl up x.i
-    # hvis i er størrer end moste_searched.number
-    # erstat moste_searched.word = x.word, moste_searched.number = x.value
-
     def addToSearchedTerms(self, search_key: str):
         i = self.searchedTerms.get(search_key)
         if self.mostSearchedTerm == None:
@@ -105,4 +99,3 @@ class synonymizer(ISynonymizer):
 
         if self.searchedTerms[self.mostSearchedTerm] < i:
             self.mostSearchedTerm = search_key
-
