@@ -13,8 +13,6 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     p1 = synonymizer()
-    s = p1.__levenshtein_distance__("ha ha", "ha ha")
-
+    p1.set_synonym_data_source(DataSource())
     print_hi('s')
-
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

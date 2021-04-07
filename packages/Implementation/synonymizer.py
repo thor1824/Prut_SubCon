@@ -26,8 +26,9 @@ def __levenshtein_distance__(s: str, t: str) -> int:
                                      distance[row - 1][col - 1] + cost)  # Cost of substitutions
     return distance[row][col]
 
-
 class synonymizer(ISynonymizer):
+    searchedTerms = dict()
+    mostSearchedTerm: str = None
     __data_source: ISynonymDataSource = None
     """request_dict = dict()"""
     __request_dict = {'Wood': [Synonym('wooden', 1), Synonym('woods', 1), Synonym('woodwind', 1)]}
@@ -37,6 +38,7 @@ class synonymizer(ISynonymizer):
         self.__data_source = data
 
     def get_synonyms(self, search_term: str) -> list[str]:
+        self.addToSearchedTerms(search_term)
         try:
             result = self.__request_dict[search_term]
             return result
@@ -61,7 +63,25 @@ class synonymizer(ISynonymizer):
 
     def get_most_searched_term(self) -> str:
         """Returns the most searched term. Must be O(1)"""
+        return self.mostSearchedTerm
         pass
 
     def __cache_result(self, search_key: str, result: list[Synonym]):
         self.__request_dict[search_key] = result
+
+    def addToSearchedTerms(self, search_key: str):
+        i = self.searchedTerms.get(search_key)
+        if self.mostSearchedTerm == None:
+            self.mostSearchedTerm = search_key
+
+        if i != None:
+            self.searchedTerms[search_key] += 1
+            i += 1
+
+        else:
+            self.searchedTerms[search_key] = 1
+            i = 1
+
+        if self.searchedTerms[self.mostSearchedTerm] < i:
+            self.mostSearchedTerm = search_key
+
