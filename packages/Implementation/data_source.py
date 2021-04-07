@@ -7,7 +7,14 @@ class DataSource(ISynonymDataSource):
     def get_synonyms(self, searchTerm: str) -> list[Synonym]:
         response = requests.get("https://api.datamuse.com/words?rel_syn=" + searchTerm)
         if (response.ok):
-            return response.json()
+            synonyms = []
+            data = response.json()
+
+            for d in data:
+                synonym = Synonym(d["word"], d["score"])
+                synonyms.append(synonym)
+            
+            return synonyms
         else:
             return []
         pass
