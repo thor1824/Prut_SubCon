@@ -40,9 +40,12 @@ class synonymizer(ISynonymizer):
     def get_synonyms(self, search_term: str) -> list[str]:
         """Get the synonyms from the data source. Calculate levenshtein distance and return top 3 results"""
         try:
+            # tries to get cached result
             cache_result = self.__request_dict[search_term]
             return cache_result
         except:
+            # caches if search term is not present in the dictionary
+            # i.e no result cached by given thr search term
             if self.__data_source is None:
                 raise Exception('Not yet initialized properly')
 
