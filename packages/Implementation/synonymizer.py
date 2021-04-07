@@ -1,7 +1,7 @@
-from Interfaces.synonymizer_interface import ISynonymizer
-from Interfaces.synonym_data_source_interface import ISynonymDataSource
+from ..Interfaces.synonymizer_interface import ISynonymizer
+from ..Interfaces.synonym_data_source_interface import ISynonymDataSource
 
-class Synonymizer(ISynonymizer):
+class synonymizer(ISynonymizer):
     def set_synonym_data_source(self, data: ISynonymDataSource) -> None:
         """Dependency injection of the data source"""
         pass

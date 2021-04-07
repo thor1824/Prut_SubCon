@@ -1,4 +1,4 @@
-from synonym import Synonym
+from ..Entities.synonym import Synonym
 
 class ISynonymDataSource:
     def get_synonyms(self, searchTerm: str) -> list[Synonym]:

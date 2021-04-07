@@ -1,4 +1,4 @@
-from synonym_data_source_interface import ISynonymDataSource
+from .synonym_data_source_interface import ISynonymDataSource
 
 
 class ISynonymizer:

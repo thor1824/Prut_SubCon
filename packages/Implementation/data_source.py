@@ -1,5 +1,5 @@
-from Entities.synonym import Synonym
-from Interfaces.synonym_data_source_interface import ISynonymDataSource
+from ..Entities.synonym import Synonym
+from ..Interfaces.synonym_data_source_interface import ISynonymDataSource
 
 class DataSource(ISynonymDataSource):
     def get_synonyms(self, searchTerm: str) -> list[Synonym]:
