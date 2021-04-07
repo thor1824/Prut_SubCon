@@ -34,7 +34,6 @@ class synonymizer(ISynonymizer):
     mostSearchedTerm: str = None
     __last_result: str = None
     __data_source: ISynonymDataSource = None
-    __request_dict = dict()
 
     def set_synonym_data_source(self, data: ISynonymDataSource) -> None:
         """Dependency injection of the data source"""
@@ -60,7 +59,7 @@ class synonymizer(ISynonymizer):
             raise Exception('Not yet initialized properly')
 
         api_results = self.__data_source.get_synonyms(search_term)
-        
+
         # Sorts the api_result by the levenshtein distance
         api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
 
@@ -78,17 +77,18 @@ class synonymizer(ISynonymizer):
         return top_result
 
     def get_last_result(self) -> str:
-        """Returns the last result returned by this instance"""
         return self.__last_result
-        """pass"""
 
     def get_most_searched_term(self) -> str:
         """Returns the most searched term. Must be O(1)"""
         return self.mostSearchedTerm
         pass
 
-    def __cache_result(self, search_key: str, result: list[Synonym]):
-        self.__request_dict[search_key] = result
+    ## count up
+    # hent ud x
+    # tæl up x.i
+    # hvis i er størrer end moste_searched.number
+    # erstat moste_searched.word = x.word, moste_searched.number = x.value
 
     def addToSearchedTerms(self, search_key: str):
         i = self.searchedTerms.get(search_key)
