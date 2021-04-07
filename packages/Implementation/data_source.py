@@ -6,7 +6,7 @@ import json
 
 class DataSource(ISynonymDataSource):
     def get_synonyms(self, searchTerm: str) -> list[Synonym]:
-        """response = requests.get("https://api.datamuse.com/words?rel_syn=" + searchTerm)
+        response = requests.get("https://api.datamuse.com/words?rel_syn=" + searchTerm)
         if (response.ok):
             synonyms = []
             data = response.json()
@@ -18,5 +18,4 @@ class DataSource(ISynonymDataSource):
             return synonyms
         else:
             return []
-        pass"""
-        return [Synonym('wooden', 1), Synonym('woods', 1), Synonym('woodwind', 1)]
+        pass
