@@ -15,10 +15,24 @@ def print_hi(name):
 if __name__ == '__main__':
     p1 = synonymizer()
     p1.set_synonym_data_source(DataSource())
+<<<<<<< Updated upstream
     s = p1.get_synonyms("Wood")
 
     print(s)
 
     """print_hi('s')"""
+=======
+    s = p1.get_synonyms('wood')
+    s2 = p1.get_synonyms('wood')
+
+    print_hi(len(s))
+    print_hi(len(s2))
+    ss = p1.get_synonyms('woods')
+    ss2 = p1.get_synonyms('woods')
+    print_hi(len(ss))
+    print_hi(len(ss2))
+
+
+>>>>>>> Stashed changes
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
