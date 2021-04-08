@@ -54,6 +54,9 @@ class Synonymizer(ISynonymizer):
         return top_result
 
     def get_last_result(self) -> str:
+        """
+        returns the last searched term
+        """
         return self.__last_result
 
     def get_most_searched_term(self) -> str:
