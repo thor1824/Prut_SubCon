@@ -55,8 +55,9 @@ class Synonymizer(ISynonymizer):
 
     def get_last_result(self) -> str:
         """
-        returns the last searched term
+        Returns the last searched term
         """
+
         return self._last_result
 
     def get_most_searched_term(self) -> str:
@@ -102,9 +103,8 @@ class Synonymizer(ISynonymizer):
 
         api_results = self._data_source.get_synonyms(search_term)
 
-        # Sorts the api_result by the levenshtein distance
-        api_results.sort(key=lambda x: _levenshtein_distance(search_term, x.word))
-        # TODO: Alphabetical Sort
+        # Sorts the api_result first by the levenshtein distance then in alphabetical order, both in ascending order
+        api_results.sort(key=lambda x: (_levenshtein_distance(search_term, x.word), x.word))
 
         top_result = list()
         n_of_results = n_results
