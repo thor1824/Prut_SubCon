@@ -4,7 +4,7 @@ from ..Interfaces.synonym_data_source_interface import ISynonymDataSource
 from ..Interfaces.synonymizer_interface import ISynonymizer
 
 
-def __levenshtein_distance__(s: str, t: str) -> int:
+def _levenshtein_distance(s: str, t: str) -> int:
     """Calculates the levenshtein distance of two words"""
 
     # Initialize matrix of zeros
@@ -31,64 +31,64 @@ def __levenshtein_distance__(s: str, t: str) -> int:
 
 
 class Synonymizer(ISynonymizer):
-    __searched_terms = dict()
-    __most_searched_term: str = None
-    __last_result: str = None
-    __data_source: ISynonymDataSource = None
+    _searched_terms = dict()
+    _most_searched_term: str = None
+    _last_result: str = None
+    _data_source: ISynonymDataSource = None
 
     def set_synonym_data_source(self, data: ISynonymDataSource) -> None:
         """
         Dependency injection of the data source
         """
 
-        self.__data_source = data
+        self._data_source = data
 
     def get_synonyms(self, search_term: str) -> list[str]:
         """
         Gets the synonyms from the data source. Calculate levenshtein distance and return top 3 results
         """
 
-        self.__last_result = search_term
-        top_result = self.__get_top_n_synonym__(search_term, 3)
-        self.__add_to_searched_terms__(search_term)
+        self._last_result = search_term
+        top_result = self._get_top_n_synonym(search_term, 3)
+        self._add_to_searched_terms(search_term)
         return top_result
 
     def get_last_result(self) -> str:
         """
         returns the last searched term
         """
-        return self.__last_result
+        return self._last_result
 
     def get_most_searched_term(self) -> str:
         """
         Returns the most searched term.
         """
 
-        return self.__most_searched_term
+        return self._most_searched_term
 
-    def __add_to_searched_terms__(self, search_key: str):
+    def _add_to_searched_terms(self, search_key: str):
         """
         Adds the search_key to the __searched_terms dict and sets its "occurrence" to 1, if it already exist the
         occurrence wil be counter one up. if the n_occurrence is higher than the current __most_searched_term then it
         __most_searched_term wil be set as search_key's value
         """
 
-        n_occurrence = self.__searched_terms.get(search_key)
-        if self.__most_searched_term is None:
-            self.__most_searched_term = search_key
+        n_occurrence = self._searched_terms.get(search_key)
+        if self._most_searched_term is None:
+            self._most_searched_term = search_key
 
         if n_occurrence is not None:
             n_occurrence += 1
-            self.__searched_terms[search_key] += n_occurrence
+            self._searched_terms[search_key] += n_occurrence
         else:
             n_occurrence = 1
-            self.__searched_terms[search_key] = n_occurrence
+            self._searched_terms[search_key] = n_occurrence
 
-        if self.__searched_terms[self.__most_searched_term] < n_occurrence:
-            self.__most_searched_term = search_key
+        if self._searched_terms[self._most_searched_term] < n_occurrence:
+            self._most_searched_term = search_key
 
     @functools.lru_cache(maxsize=100)
-    def __get_top_n_synonym__(self, search_term: str, n_results) -> list[str]:
+    def _get_top_n_synonym(self, search_term: str, n_results) -> list[str]:
         """
         Fetches all synonyms from the __data_source sorts them by the levenshtein distance in ascending order and
         return top n of that result (n_results).
@@ -97,13 +97,13 @@ class Synonymizer(ISynonymizer):
 
         Throws an Exception if  the __data_source is not set.
         """
-        if self.__data_source is None:
+        if self._data_source is None:
             raise Exception('Not yet initialized properly')
 
-        api_results = self.__data_source.get_synonyms(search_term)
+        api_results = self._data_source.get_synonyms(search_term)
 
         # Sorts the api_result by the levenshtein distance
-        api_results.sort(key=lambda x: __levenshtein_distance__(search_term, x.word))
+        api_results.sort(key=lambda x: _levenshtein_distance(search_term, x.word))
         # TODO: Alphabetical Sort
 
         top_result = list()
